@@ -37,7 +37,7 @@ npm run start:dev
 
 ## API Documentation
 
-The API documentation is available at [http://localhost:{port}/docs](http://localhost:3000/docs) when the server is running.
+The API documentation is available at [http://localhost:{port}/docs](http://localhost:3000/docs) with Swagger when the server is running.
 
 ### Authentication
 
@@ -48,8 +48,8 @@ The API documentation is available at [http://localhost:{port}/docs](http://loca
 
 ```json
 {
-  "username": "your_username",
-  "password": "your_password"
+  "email": "email",
+  "password": "password"
 }
 ```
 
@@ -60,8 +60,37 @@ The API documentation is available at [http://localhost:{port}/docs](http://loca
 
 ```json
 {
-  "username": "your_username",
-  "password": "your_password"
+  "email": "email",
+  "password": "password"
+}
+```
+
+- **Response**:
+
+```json
+{
+  "access_token": "access_token",
+  "refresh_token": "refresh_token"
+}
+```
+
+#### Refresh Token
+
+- `POST /auth/refresh`
+- **Body**:
+
+```json
+{
+  "refreshToken": "string"
+}
+```
+
+- **Response**:
+
+```json
+{
+  "access_token": "new_access_token",
+  "refresh_token": "new_refresh_token"
 }
 ```
 
@@ -73,8 +102,6 @@ The API documentation is available at [http://localhost:{port}/docs](http://loca
 - **Query Parameters**:
   - `page`: Page number (default: 1)
   - `limit`: Number of products per page (default: 10)
-  - `search`: Search term for product name
-  - `sort`: Sort order (asc/desc) for price
 - **Response**:
 
 ```json
@@ -83,16 +110,18 @@ The API documentation is available at [http://localhost:{port}/docs](http://loca
     {
       "_id": "product_id",
       "name": "product_name",
-      "description": "product_description",
       "price": 100,
       "likes": 10,
+      "category": "product_category",
+      "subcategory": "product_subcategory",
       "createdAt": "2023-01-01T00:00:00.000Z",
       "updatedAt": "2023-01-01T00:00:00.000Z"
     }
   ],
-  "total": 100,
-  "page": 1,
-  "limit": 10
+  "currentPage": 1,
+  "totalPages": 10,
+  "limit": 10,
+  "total": 100
 }
 ```
 
@@ -100,14 +129,15 @@ The API documentation is available at [http://localhost:{port}/docs](http://loca
 
 - `POST /products`
 - **Headers**:
-  - `Authorization`: `Bearer your_jwt_token`
+  - `Authorization`: `Bearer access_token`
 - **Body**:
 
 ```json
 {
   "name": "product_name",
-  "description": "product_description",
-  "price": 100
+  "price": 0,
+  "category": "product_category",
+  "subcategory": "product_subcategory"
 }
 ```
 
@@ -117,9 +147,10 @@ The API documentation is available at [http://localhost:{port}/docs](http://loca
 {
   "_id": "product_id",
   "name": "product_name",
-  "description": "product_description",
   "price": 100,
   "likes": 0,
+  "category": "product_category",
+  "subcategory": "product_subcategory",
   "createdAt": "2023-01-01T00:00:00.000Z",
   "updatedAt": "2023-01-01T00:00:00.000Z"
 }
@@ -133,31 +164,37 @@ The API documentation is available at [http://localhost:{port}/docs](http://loca
 - **Response**:
 
 ```json
-{
-  "products": [
-    {
-      "_id": "product_id",
-      "name": "product_name",
-      "description": "product_description",
-      "price": 100,
-      "likes": 10,
-      "createdAt": "2023-01-01T00:00:00.000Z",
-      "updatedAt": "2023-01-01T00:00:00.000Z"
-    }
-  ]
-}
+[
+  {
+    "_id": "product_id",
+    "name": "product_name",
+    "price": 100,
+    "likes": 10,
+    "category": "product_category",
+    "subcategory": "product_subcategory",
+    "createdAt": "2023-01-01T00:00:00.000Z",
+    "updatedAt": "2023-01-01T00:00:00.000Z"
+  }
+]
 ```
 
 #### Like/unlike a product
 
 - `POST /products/:id/like`
 - **Headers**:
-  - `Authorization`: `Bearer your_jwt_token`
+  - `Authorization`: `Bearer access_token`
 - **Response**:
 
 ```json
 {
-  "message": "Product liked successfully"
+  "_id": "product_id",
+  "name": "product_name",
+  "price": 100,
+  "likes": 10,
+  "category": "product_category",
+  "subcategory": "product_subcategory",
+  "createdAt": "2023-01-01T00:00:00.000Z",
+  "updatedAt": "2023-01-01T00:00:00.000Z"
 }
 ```
 

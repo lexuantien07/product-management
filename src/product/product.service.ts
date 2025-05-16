@@ -30,6 +30,7 @@ export class ProductService {
 
     const products = await this.productModel
       .find()
+      .select('-likedBy')
       .skip((page - 1) * limit)
       .limit(limit)
       .exec();
@@ -69,6 +70,9 @@ export class ProductService {
 
     await product.save();
     await this.redisService.deleteByPattern('products');
-    return product;
+    // delete likedBy field in product
+    const convertedProduct = JSON.parse(JSON.stringify(product));
+    delete convertedProduct.likedBy;
+    return convertedProduct;
   }
 }
